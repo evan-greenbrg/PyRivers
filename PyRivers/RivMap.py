@@ -17,7 +17,7 @@ from rasterio.plot import show_hist
 from rasterio.mask import mask
 
 
-def crop_to_mask(image, meta):
+def crop_to_mask(ds):
     """
     Crops an input image to its extents (i.e. removes columns/rows containing
     all zeros) 
@@ -38,7 +38,16 @@ def crop_to_mask(image, meta):
         cv2.RETR_EXTERNAL,
         cv2.CHAIN_APPROX_SIMPLE
     )
-    boundaries = cnts[0][:,0,:]
+    # Use the longest element
+    olength = 0
+    for i, cnt in enumerate(cnts):
+        length = len(cnt)
+        if length > olength:
+            use = i
+            olength = length
+
+    # pick out the boundaries of object
+    boundaries = cnts[use][:,0,:]
     x = boundaries[:, 0]
     y = boundaries[:, 1]
 
@@ -194,7 +203,7 @@ def centerline_from_mask(image, meta):
     return image, meta
 
 
-if "__name__" == __main__:
+if __name__ == "__main__":
     from matplotlib import pyplot as plt
 
     root = '/home/greenberg/ExtraSpace/PhD/Projects/BarT/beni/1985'

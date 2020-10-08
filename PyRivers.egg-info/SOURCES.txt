@@ -2,6 +2,7 @@ README.txt
 setup.py
 PyRivers/Downloaders.py
 PyRivers/RasterHelpers.py
+PyRivers/RivMap.py
 PyRivers.egg-info/PKG-INFO
 PyRivers.egg-info/SOURCES.txt
 PyRivers.egg-info/dependency_links.txt

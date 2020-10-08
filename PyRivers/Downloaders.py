@@ -27,6 +27,7 @@ def pullRiverFiles(outroot, bucket_name, river, year,
 
         print('File name: ', fn)
 
+        namel.insert(-1, 'raw')
         # Join prefix path into local file path
         outdir = os.path.join(outroot, '/'.join(namel))
 
