@@ -4,9 +4,10 @@ from google.cloud import storage
 from PyRivers import Downloaders
 
 
-outroot = '/home/greenberg/ExtraSpace/PhD/Projects/BarT'
+outroot = '/Volumes/EGG-HD/PhD Documents/Projects/BarT/riverData'
 bucket_name = 'earth-engine-rivmap'
 river = 'beni'
-year = 1990
+year = 1985
 
-Downloaders.pullRiverFiles(outroot, bucket_name, river, year)
+for year in range(1986, 2001):
+    Downloaders.pullRiverFiles(outroot, bucket_name, river, year)
