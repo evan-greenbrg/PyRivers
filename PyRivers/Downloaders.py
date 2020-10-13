@@ -47,6 +47,28 @@ def pullRiverFiles(outroot, bucket_name, river, year,
             print('File didn\'t download, something happened')
 
 
+def pushRiverFiles(fn, bucket_name, river, stage, year, idx,
+                   storage_client=storage.Client()):
+    """
+    Push file to an object in google cloud storage
+    """
+    bucket_name = 'earth-engine-rivmap'
+
+
+    name = fn.split('/')[-1]
+
+    path = f'{river}/{stage}/{year}/{idx}/{name}'
+
+    bucket = storage_client.get_bucket(bucket_name)
+    bl = bucket.blob(path)
+
+    bl.upload_from_filename(fn)
+    
+    print('Uploaded: ', name)
+
+    
+
+
 if __name__ == '__main__':
     outroot = '/home/greenberg/ExtraSpace/PhD/Projects/BarT'
     bucket_name = 'earth-engine-rivmap'
