@@ -7,9 +7,9 @@ from PyRivers import Downloaders
 
 bucket_name = 'earth-engine-rivmap'
 river = 'beni'
-stage = 'clipped'
+stage = 'clean'
 
-for year in range(1987, 2001):
+for year in range(1985, 2001):
     print(year)
 
     root = f'/Volumes/EGG-HD/PhD Documents/Projects/BarT/riverData/{river}/{stage}/{year}/*/*.tif'
