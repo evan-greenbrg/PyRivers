@@ -2,14 +2,14 @@ import os
 from google.cloud import storage
 
 
-def pullRiverFiles(outroot, bucket_name, river, year, 
+def pullRiverFiles(outroot, bucket_name, river, stage, year, 
                    storage_client=storage.Client()):
     """
     Pulls all files associated with a river and year in a 
     given storage bucket
     """
     # Get prefix to search for files
-    prefix = f'{river}/{year}'
+    prefix = f'{river}/{stage}/{year}'
 
     # Set up bucket object
     bucket = storage_client.get_bucket(bucket_name)
@@ -21,22 +21,16 @@ def pullRiverFiles(outroot, bucket_name, river, year,
     for blob in blobs:
         # split prefix to list
         namel = blob.name.split('/')
-
-        # Get filename out of prefix list
         fn = namel.pop(-1)
 
-        print('File name: ', fn)
-
-        namel.insert(-1, 'raw')
         # Join prefix path into local file path
-        outdir = os.path.join(outroot, '/'.join(namel))
+        outpath = os.path.join(outroot, '/'.join(namel))
 
         # Check if path exists
-        if not os.path.exists(outdir):
-            os.makedirs(outdir)
+        if not os.path.exists(outpath):
+            os.makedirs(outpath)
 
-        # Join back the file name
-        outpath = os.path.join(outdir, fn)
+        outpath = os.path.join(outpath, fn)
 
         # download the object
         blob.download_to_filename(outpath)
@@ -48,9 +42,11 @@ def pullRiverFiles(outroot, bucket_name, river, year,
 
 
 if __name__ == '__main__':
-    outroot = '/home/greenberg/ExtraSpace/PhD/Projects/BarT'
+#    outroot = '/Volumes/EGG-HD/PhD Documents/Projects/BarT/riverData'
+    outroot = '/home/greenberg/ExtraSpace/PhD/Projects/BarT/'
     bucket_name = 'earth-engine-rivmap'
     river = 'beni'
-    year = 1990
+    stage = 'clipped'
+    year = 1985
 
-    pullRiverFiles(outroot, bucket_name, river, year)
+    pullRiverFiles(outroot, bucket_name, river, stage, year)

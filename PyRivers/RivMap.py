@@ -77,9 +77,13 @@ def crop_to_mask(ds):
         crop=True
     )
 
-    meta['transform'] = out_transform
+    meta.update({
+        'transform': out_transform,
+        'width': out_img.shape[2],
+        'height': out_img.shape[1],
+    })
 
-    return out_img, meta 
+    return out_img[0, :, :], meta 
 
 
 def add_buffer(image, meta):
@@ -200,7 +204,7 @@ def centerline_from_mask(image, meta):
     for coord in largest_coords[0]:
         image[coord[0], coord[1]] = 1
 
-    return image, meta
+    return image[0, :, :], meta
 
 
 if __name__ == "__main__":
