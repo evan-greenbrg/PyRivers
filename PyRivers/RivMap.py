@@ -77,6 +77,26 @@ def crop_to_mask(ds):
         crop=True
     )
 
+    # Add two pixel boarder
+#    height = out_img[0].shape[0]
+#    out_img = out_img[0]
+#    out_img = numpy.hstack(
+#        [
+#            numpy.zeros((height, 2)), 
+#            out_img,
+#            numpy.zeros((height, 2)), 
+#        ]
+#    )
+#
+#    width = out_img.shape[1]
+#    out_img = numpy.vstack(
+#        [
+#            numpy.zeros((2, width)), 
+#            out_img,
+#            numpy.zeros((2, width)), 
+#        ]
+#    )
+
     meta.update({
         'transform': out_transform,
         'width': out_img.shape[2],

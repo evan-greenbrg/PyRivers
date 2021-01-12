@@ -9,9 +9,4 @@ setup(
     license='LICENSE.txt',
     description='Helper functions to perform kinematic analysis on rivers',
     long_description=open('README.txt').read(),
-    install_requires=[
-        "numpy",
-        "pandas",
-        "rasterio"
-    ],
 )

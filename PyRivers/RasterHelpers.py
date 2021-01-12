@@ -2,6 +2,7 @@ import copy
 import glob
 import os
 
+from skimage.measure import label   
 from matplotlib import pyplot as plt
 from matplotlib.widgets import Button
 from matplotlib.patches import Rectangle
@@ -163,6 +164,76 @@ def cleanRaster(fp, outpath):
             dest.write(dsnew[None,...])
 
     return dsnew, ds_meta
+
+
+def WaterIndex(red, swir):
+    """
+    Discriminating index for identifying water
+    """
+    return (red - swir) / (red + swir)
+
+
+def ImageConvert(image):
+    new_image = np.zeros(image.shape)
+    for idx, im in enumerate(image):
+        # Because I don't know what the no data value is I have to do this
+        # Setting up array where no data is 0
+        new_im = np.zeros(im.shape)
+        for i, row in enumerate(im):
+            for j, val in enumerate(row):
+                if val > 0:
+                    new_im[i, j] = val
+
+        # Get max in the band
+        band_max = new_im.max()
+        new_im = new_im / band_max
+
+        # Save in the image
+        new_image[idx] = new_im
+
+    return new_image.transpose()
+
+
+def getLargestCC(combined_mask):
+    labels = label(combined_mask)
+     # assume at least 1 CC
+    assert( labels.max() != 0 )
+    largestCC = labels == np.argmax(np.bincount(labels.flat)[1:])+1
+    return largestCC
+
+
+def enhanceMask(image, mask):
+    # Calculate index over image
+    image = image.transpose()
+    mask = mask.transpose()
+    index_image = np.zeros((mask.shape[0], mask.shape[1]))
+    for i, row in enumerate(image):
+        for j, vals in enumerate(row):
+            if vals[0] > 0:
+                index_image[i, j] = WaterIndex(vals[3], vals[4])
+            else:
+                index_image[i, j] = 0
+
+
+    # convert to binrary
+    index_image[index_image < 0] = 0 
+    index_image[index_image > 0] = 1 
+
+    # Combine the two masks
+    mask = mask[:,:,0]
+    combined_mask = index_image + mask
+
+    # convert to binrary
+    combined_mask[combined_mask < 0] = 0 
+    combined_mask[combined_mask > 0] = 1 
+
+#    combined_mask = getLargestCC(combined_mask)
+
+    return combined_mask.reshape((
+        combined_mask.shape[0],
+        combined_mask.shape[1],
+        1
+    ))
 
 
 if __name__ == '__main__':

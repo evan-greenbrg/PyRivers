@@ -2,14 +2,17 @@ import os
 from google.cloud import storage
 
 
-def pullRiverFiles(outroot, bucket_name, river, stage, year, 
-                   storage_client=storage.Client()):
+def pullRiverFiles(outroot, bucket_name, river, year, 
+                   stage=None, storage_client=storage.Client()):
     """
     Pulls all files associated with a river and year in a 
     given storage bucket
     """
     # Get prefix to search for files
-    prefix = f'{river}/{stage}/{year}'
+    if stage:
+        prefix = f'{river}/{stage}/{year}'
+    else:
+        prefix = f'{river}/{year}'
 
     # Set up bucket object
     bucket = storage_client.get_bucket(bucket_name)
