@@ -9,10 +9,6 @@ from rasterio import transform
 from matplotlib import pyplot as plt
 
 
-PIXEL_SIZE = 30     # Landsat 30m pixels
-YEAR = 1985
-
-
 def getDataFiles(data_fps):
     """"
     From list of files in directory structure, return data files by type
@@ -62,10 +58,16 @@ def stackAllIdxs(year_dfs):
         return pandas.concat(year_dfs).reset_index(drop=True)
 
 
-# Get Image and data file paths from given year
-for year in range(1985, 2001):
-    image_root = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/beni/clipped/{year}/*/*.tif'
-    data_root = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/beni/data/{year}/*/*.csv'
+PIXEL_SIZE = 30     # Landsat 30m pixels
+river = 'ica'
+save_idx = True
+
+for year in range(2004, 2018):
+    # image_root = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/riverData/{river}/clipped/{year}/*/*.tif'
+    image_root = f'/Users/greenberg/Documents/PHD/Projects/BarT/LinuxFiles/riverData/{river}/clipped/{year}/*/*.tif'
+
+    # data_root = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/riverData/{river}/data/{year}/*/*.csv'
+    data_root = f'/Users/greenberg/Documents/PHD/Projects/BarT/LinuxFiles/riverData/{river}/data/{year}/*/*.csv'
 
     # Get image files
     image_fps = glob.glob(image_root)
@@ -74,8 +76,14 @@ for year in range(1985, 2001):
     data_fps = glob.glob(data_root)
     data_files = getDataFiles(data_fps)
 
+    if len(data_fps) == 0:
+        continue
+    else:
+        print(year)
+
     year_dfs = []
     for idx, image_fp in enumerate(image_fps):
+        print(idx)
 
         # Load the image
         ds = rasterio.open(image_fp)
@@ -111,12 +119,17 @@ for year in range(1985, 2001):
             centerline = centerline.iloc[:len(curvature)]
 
         # Build dataframes and append all idxs
-        year_dfs.append(buildDataFrame(ds, centerline, width, curvature))
+        year_df = buildDataFrame(ds, centerline, width, curvature)
+        year_dfs.append(year_df)
 
-    # Stack the list of dataframes
-    data_df = stackAllIdxs(year_dfs)
+        if save_idx:
+            outpath = f'/Users/greenberg/Documents/PHD/Projects/BarT/LinuxFiles/riverData/{river}/data/{year}/idx{idx+1}/{river}_{year}_data.csv'
+            year_df.to_csv(outpath)
 
-    outpath = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/beni/data/{year}/beni_{year}_data.csv'
-    data_df.to_csv(outpath)
+    if not save_idx:
+        # Stack the list of dataframes
+        data_df = stackAllIdxs(year_dfs)
 
-
+        # outpath = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/riverData/{river}/data/{year}/{river}_{year}_data.csv'
+        outpath = f'/Users/greenberg/Documents/PHD/Projects/BarT/LinuxFiles/riverData/{river}/data/{year}/{river}_{year}_data.csv'
+        data_df.to_csv(outpath)

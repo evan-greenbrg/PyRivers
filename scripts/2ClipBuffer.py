@@ -5,11 +5,12 @@ from matplotlib import pyplot as plt
 import rasterio
 from PyRivers import RivMap 
 
-river = 'beni'
-year = 1985
+river = 'ica'
 
-for year in range(1985, 2001):
-    rootdir = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/{river}/clean/{year}/*'
+i = 1
+for year in range(2004, 2022, 2):
+#    rootdir = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/riverData/{river}/clean/{year}/*'
+    rootdir = f'/Users/greenberg/Documents/PHD/Projects/BarT/LinuxFiles/riverData/{river}/clean/{year}/idx{i}'
     # rootdir = f'/Volumes/EGG-HD/PhD Documents/Projects/BarT/riverData/{river}/clean/{year}/*/'
 
     search_c = f'*{year}*clean*.tif'
@@ -17,11 +18,14 @@ for year in range(1985, 2001):
     q = os.path.join(rootdir, search_c)
     fps = glob.glob(q)
 
-    i = 1
+    if len(fps) == 0:
+        continue
+
     for fp in fps:
 
     #    rootdir = f'/Volumes/EGG-HD/PhD Documents/Projects/BarT/riverData/{river}/clipped/{year}/idx{i}'
-        rootdir = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/{river}/clipped/{year}/idx{i}'
+#        rootdir = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/riverData/{river}/clipped/{year}/idx{i}'
+        rootdir = f'/Users/greenberg/Documents/PHD/Projects/BarT/LinuxFiles/riverData/{river}/clipped/{year}/idx{i}'
 
         fn_out = f'{river}_{year}__clip.tif'
         opath = os.path.join(rootdir, fn_out)
@@ -39,4 +43,3 @@ for year in range(1985, 2001):
         with rasterio.open(opath, "w", **meta) as dest:
             dest.write(image.astype(rasterio.uint8), 1)
 
-        i += 1

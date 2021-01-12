@@ -13,7 +13,7 @@ for year in range(1985, 2001):
     print(year)
 
 #    root = f'/Volumes/EGG-HD/PhD Documents/Projects/BarT/riverData/{river}/{stage}/{year}/*/*.tif'
-    root = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/{river}/{stage}/{year}/*/*.tif'
+    root = f'/home/greenberg/ExtraSpace/PhD/Projects/BarT/riverData/{river}/{stage}/{year}/*/*.tif'
     fps = glob.glob(root)
 
     for fp in fps:
